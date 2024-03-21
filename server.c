@@ -1,31 +1,5 @@
 #include "Practical.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <unistd.h>
-#include <ifaddrs.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
-// Should be in .h file?
-typedef struct {
-    char *fileName;
-    int fileSize;
-    char *fileContents;
-    
-} fileInfo;
-
-// Should be in .h file?
-typedef struct {
-    char *username;
-    char *IP;
-    fileInfo *fileList;
-    int numFiles;
-} userInfo;
+#include "helperFunctions.h"
 
 
 int main(int argc, char *argv[]) {
@@ -40,7 +14,7 @@ int main(int argc, char *argv[]) {
         //allocate memory for localFiles
         //store in localFiles
 
-    // Allocate memory for the user list
+    /*// Allocate memory for the user list
     userInfo *users = malloc(maxUsers * sizeof(userInfo));
     if (users == NULL) {
         fprintf(stderr, "Failed to allocate memory for users\n");
@@ -54,23 +28,29 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "Failed to allocate memory for file list\n");
             exit(EXIT_FAILURE);
         }
-    }
+    }*/
 
+    int port = atoi(argv[1]); // Port number used for the connection
+    char *clientIP;
 
-
-
-    //start server
+    int ServerSocket = ServerSetup(atoi(argv[1]));
+    printf("Server is listening on port %d\n", port);
+    PrintLocalIP();
+    clientIP = ListenForConnections(port);
+    printf("Connection from %s\n", clientIP);
+    SendMessage(ServerSocket, "Hello World");
+    close(ServerSocket);
+    printf("Server closed connection\n");
     
     //while (totalConnections < 2) {
         //listen for connections
         //store username and IP in users
         //totalConnections++
-        
     //}
 
 
-    free(users->fileList);
-    free(users);
+   /*free(users->fileList);
+    free(users);*/
     
     return 0;
 }
