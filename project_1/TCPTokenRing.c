@@ -33,6 +33,13 @@ char *fileName = NULL;
 void ClientSendFile(const char *serverIP, int port);
 
 /**
+ * Sets up a TCP client socket to connect to the specified server IP and port.
+ * @param clientIP IP address of the server to connect to.
+ * @param port Port number of the server to connect to.
+ */
+void ClientSetup(const char *clientIP, int port);
+
+/**
  * Sets up a TCP server socket to listen for incoming connections on the specified port.
  * @param port Port number on which the server will listen for connections.
  */
@@ -112,6 +119,18 @@ int main(int argc, char *argv[]) {
 		printf("Goodbye!\n");
     }
     return 0;
+}
+
+void ClientSetup(const char *clientIP, int port) {
+    // Convert port from int to string
+    char serverPortStr[6]; // Enough to hold all port numbers (up to 65535)
+    snprintf(serverPortStr, sizeof(serverPortStr), "%d", port);
+
+    // Setup TCP client socket with the server IP and port number as a string
+    int sock = SetupTCPClientSocket(clientIP, serverPortStr);
+    if (sock < 0) {
+        DieWithSystemMessage("SetupTCPClientSocket() failed"); // Error if socket setup fails
+    }
 }
 
 void ClientSendFile(const char *nextIP, int port) {
