@@ -4,7 +4,6 @@
 CC = gcc
 CFLAGS = -std=gnu99
 RM = rm -f
-DB_CLEANUP = rm -f user_database.txt # Adjust if the user database is stored differently
 
 # Source files
 COMMON_SOURCES = helperFunctions.c AddressUtility.c TCPServerUtility.c TCPClientUtility.c DieWithMessage.c

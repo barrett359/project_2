@@ -43,11 +43,13 @@ void SendMessage(int sock, const char *message);
 //Recieves
 bool ReceiveMessage(int sock);
 
+
+
 //Prints the local IP address
 void PrintLocalIP();
 
 //Server listens for client connections
-void ListenForConnections(int servSock, char *clientIP);
+int ListenForConnections(int servSock, char *clientIP);
 
 //Prints a local file
 void ProcessFile(const char *buffer, ssize_t bufferSize, const char *fileName);

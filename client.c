@@ -10,7 +10,8 @@ int main(int argc, char *argv[]) {
     char *serverIP = argv[1];
     int port = atoi(argv[2]);
 
-    int socket = ClientConnect(serverIP, port);
-    ReceiveMessage(socket);
+    int serverSocket = ClientConnect(serverIP, port);
+    //printf("Server Socket: %d\n", serverSocket);
+    ReceiveMessage(serverSocket);
     return 0;
 }

@@ -7,9 +7,29 @@ int main(int argc, char *argv[]) {
     int maxUsers = 2;
     int filesPerUser = 10;
     
+    char testFileName[] = "testFile.txt";
     fileInfo *localFiles;
 
-    //Create list of local files
+    int port = atoi(argv[1]); // Port number used for the connection
+    char clientIP[INET_ADDRSTRLEN]; // Buffer for the client's IP address
+
+    int servSock = ServerSetup(port);
+    printf("Server is listening on port %d\n", port);
+    PrintLocalIP();
+    int clientSock = ListenForConnections(servSock, clientIP);
+    printf("Sending file to client: %s\n", testFileName);
+    
+    //SendMessage(clientSock, message);
+    
+    SendFile(clientSock, testFileName);
+
+    close(clientSock);
+    printf("Closed connection\n");
+    
+    return 0;
+}
+
+//Create list of local files
         //read files from directory
         //allocate memory for localFiles
         //store in localFiles
@@ -30,19 +50,7 @@ int main(int argc, char *argv[]) {
         }
     }*/
 
-    int port = atoi(argv[1]); // Port number used for the connection
-    char *clientIP = malloc(INET_ADDRSTRLEN); // Buffer for the client's IP address
-
-    int ServerSocket = ServerSetup(atoi(argv[1]));
-    printf("Server is listening on port %d\n", port);
-    PrintLocalIP();
-    ListenForConnections(ServerSocket, clientIP);
-    printf("Connection from %s\n", clientIP);
-    SendMessage(ServerSocket, "Hello World");
-    close(ServerSocket);
-    printf("Server closed connection\n");
-    
-    //while (totalConnections < 2) {
+//while (totalConnections < 2) {
         //listen for connections
         //store username and IP in users
         //totalConnections++
@@ -51,6 +59,3 @@ int main(int argc, char *argv[]) {
 
    /*free(users->fileList);
     free(users);*/
-    
-    return 0;
-}

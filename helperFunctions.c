@@ -27,8 +27,8 @@ int ServerSetup(int port) {
 }
 
 void SendMessage(int sock, const char *message) {
-    // Send the message to the server
     ssize_t numBytes = send(sock, message, strlen(message), 0);
+    printf("Bytes sent: %ld\n", numBytes); // Print the number of bytes sent
     if (numBytes < 0) {
         DieWithSystemMessage("send() failed"); // Error if send fails
     } else if (numBytes != strlen(message)) {
@@ -43,15 +43,23 @@ void SendFile(int sock, const char *fileName) {
         DieWithUserMessage("File open failed", fileName); // Error if file can't be opened
     }
 
+    bool isFirstChunk = true; // Flag to track the first chunk
     char fileBuffer[MAX_BUFFER_SIZE]; // Buffer for file content
     int bytesRead; // Number of bytes read from the file
 
     // Read from the file and send its content over the socket
-    while ((bytesRead = fread(fileBuffer, 1, MAX_BUFFER_SIZE, file)) > 0) {
-        if (send(sock, fileBuffer, bytesRead, 0) != bytesRead) {
+    while ((bytesRead = fread(fileBuffer + (isFirstChunk ? 5 : 0), 1, MAX_BUFFER_SIZE - (isFirstChunk ? 5 : 0), file)) > 0) {
+        if (isFirstChunk) {
+            // Prepend "FILE:" to the first chunk
+            memcpy(fileBuffer, "FILE:", 5);
+            bytesRead += 5; // Adjust bytesRead to include "FILE:"
+            isFirstChunk = false; // Reset the flag after the first chunk
+        }
+		if (send(sock, fileBuffer, bytesRead, 0) != bytesRead) {
             DieWithSystemMessage("send() failed"); // Error if send does not complete properly
         }
-    }
+		printf("Sent %d bytes\n", bytesRead);
+	}
 
     if (ferror(file)) {
         DieWithSystemMessage("fread() failed"); // Error on file read failure
@@ -73,14 +81,20 @@ bool ReceiveMessage(int sock) {
     } else if (numBytesRcvd == 0) {
         // Connection closed by the server
         return false; // No data received, return false
-    } else {
+    }
+
+    if(IsFile(recvBuffer)) {
+        ProcessFile(recvBuffer, numBytesRcvd, "receivedFile.txt");
+        return true;
+    }
+    else{
         recvBuffer[numBytesRcvd] = '\0'; // Terminate the string
         printf("Received: %s\n", recvBuffer); // Print the thank you message
         return true; // Successfully received a thank you note, return true
     }
 }
 
-void ListenForConnections(int servSock, char *clientIP) {
+int ListenForConnections(int servSock, char *clientIP) {
     struct sockaddr_in clntAddr; // Client address structure
     socklen_t clntAddrLen = sizeof(clntAddr); // Length of the client address structure
 
@@ -90,16 +104,16 @@ void ListenForConnections(int servSock, char *clientIP) {
         DieWithSystemMessage("accept() failed");
     }
 
-    clientIP = inet_ntoa(clntAddr.sin_addr);
-
 	printf("Handling client %s\n", inet_ntoa(clntAddr.sin_addr));
 
     // Convert the client's IP address to a string
-    char senderIP[INET_ADDRSTRLEN];
-    if (inet_ntop(AF_INET, &clntAddr.sin_addr, senderIP, INET_ADDRSTRLEN) == NULL) {
-            DieWithSystemMessage("Error getting sender IP address");
+    //char senderIP[INET_ADDRSTRLEN];
+    if (inet_ntop(AF_INET, &clntAddr.sin_addr, clientIP, INET_ADDRSTRLEN) == NULL) {
+        DieWithSystemMessage("Error getting sender IP address");
     }
 
+    printf("Connection established on socket %d\n", clntSock); // Print the client socket
+    return clntSock;
 }
 
 bool IDUser(int sock, const char *username) {
