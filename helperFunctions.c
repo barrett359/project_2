@@ -80,7 +80,7 @@ bool ReceiveMessage(int sock) {
     }
 }
 
-char ListenForConnections(int servSock) {
+void ListenForConnections(int servSock, char *clientIP) {
     struct sockaddr_in clntAddr; // Client address structure
     socklen_t clntAddrLen = sizeof(clntAddr); // Length of the client address structure
 
@@ -90,6 +90,8 @@ char ListenForConnections(int servSock) {
         DieWithSystemMessage("accept() failed");
     }
 
+    clientIP = inet_ntoa(clntAddr.sin_addr);
+
 	printf("Handling client %s\n", inet_ntoa(clntAddr.sin_addr));
 
     // Convert the client's IP address to a string
@@ -98,24 +100,18 @@ char ListenForConnections(int servSock) {
             DieWithSystemMessage("Error getting sender IP address");
     }
 
-    char buffer[MAX_BUFFER_SIZE]; // Buffer for receiving data
-    ssize_t numBytesRcvd = recv(clntSock, buffer, MAX_BUFFER_SIZE, 0); // Receive data
-    if (numBytesRcvd < 0) {
-        DieWithSystemMessage("recv() failed"); // Error if receive fails
-    }
-    return inet_ntoa(clntAddr.sin_addr);
 }
 
 bool IDUser(int sock, const char *username) {
     char message[MAX_BUFFER_SIZE];
     snprintf(message, sizeof(message), "ID:%s", username);
-    sendMessage(sock, NULL, message);
-    return receiveResponse(sock);
+    SendMessage(sock, message);
+    return ReceiveMessage(sock);
 }
 
 void ProcessMessage(const char *buffer, ssize_t bufferSize) {
-    if (isFile(buffer)) {
-        processFile(buffer, bufferSize, "receivedFile.txt");
+    if (IsFile(buffer)) {
+        ProcessFile(buffer, bufferSize, "receivedFile.txt");
     } else {
         printf("Received: %s\n", buffer);
     }

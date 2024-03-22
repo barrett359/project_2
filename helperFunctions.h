@@ -12,6 +12,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "Practical.h"
+
 #define MAX_BUFFER_SIZE 512 // Maximum buffer size for file content
 
 typedef struct {
@@ -45,16 +47,12 @@ bool ReceiveMessage(int sock);
 void PrintLocalIP();
 
 //Server listens for client connections
-char ListenForConnections(int servSock);
+void ListenForConnections(int servSock, char *clientIP);
 
 //Prints a local file
 void ProcessFile(const char *buffer, ssize_t bufferSize, const char *fileName);
 
 //Checks if a buffer is a file or a message
 bool IsFile(const char *buffer);
-
-
-
-
 
 #endif // HELPERFUNCTIONS_H_

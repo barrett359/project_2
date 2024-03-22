@@ -31,12 +31,12 @@ int main(int argc, char *argv[]) {
     }*/
 
     int port = atoi(argv[1]); // Port number used for the connection
-    char *clientIP;
+    char *clientIP = malloc(INET_ADDRSTRLEN); // Buffer for the client's IP address
 
     int ServerSocket = ServerSetup(atoi(argv[1]));
     printf("Server is listening on port %d\n", port);
     PrintLocalIP();
-    clientIP = ListenForConnections(port);
+    ListenForConnections(ServerSocket, clientIP);
     printf("Connection from %s\n", clientIP);
     SendMessage(ServerSocket, "Hello World");
     close(ServerSocket);
