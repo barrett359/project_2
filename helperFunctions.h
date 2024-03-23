@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 #include "Practical.h"
 
@@ -20,7 +21,6 @@
 typedef struct {
     char *fileName;
     int fileSize;
-    char *fileContents;
 } fileInfo;
 
 typedef struct {
@@ -117,5 +117,18 @@ void ProcessFile(const char *buffer, ssize_t bufferSize, const char *fileName);
 * Checks if the buffer starts with "FILE:" to determine if it contains a file.
 */
 bool IsFile(const char *buffer);
+
+/*
+* Brief: Lists the files in a directory 
+*        and stores them in a fileInfo struct.
+* @param path The path to the directory.
+* @param count Buffer to store the number of files in the directory.
+* @return A pointer to the fileInfo struct containing the file information.
+*
+* Lists the files in a directory and stores them in a fileInfo struct.
+* The fileInfo struct contains the file name and file size.
+*/
+
+fileInfo *listFiles(const char *path, int *count);
 
 #endif // HELPERFUNCTIONS_H_
