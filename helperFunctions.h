@@ -40,9 +40,9 @@ void SendFile(int sock, const char *fileName);
 
 void SendMessage(int sock, const char *message);
 
-//Recieves
+//Receives
 bool ReceiveMessage(int sock);
-
+bool ReceiveString(int sock, char* buffer);
 
 
 //Prints the local IP address

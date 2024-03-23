@@ -10,6 +10,7 @@ int ClientConnect(const char *serverIP, int port) {
     if (sock < 0) {
         DieWithSystemMessage("SetupTCPClientSocket() failed"); // Error if socket setup fails
     }
+
     return sock;
 }
 
@@ -94,6 +95,23 @@ bool ReceiveMessage(int sock) {
     }
 }
 
+bool ReceiveString(int sock, char* buffer) {
+    //Usage: After calling, received contents are stored in buffer pointer
+
+    // Attempt to receive string
+    ssize_t numBytesRcvd = recv(sock, buffer, MAX_BUFFER_SIZE - 1, 0);
+    // Check if the receive was successful
+    if (numBytesRcvd < 0) {
+        DieWithSystemMessage("recv() failed"); // Error if receive fails
+        return false; // Return false if there's an error
+    } else if (numBytesRcvd == 0) {
+        // Connection closed by the server
+        return false; // No data received, return false
+    }
+    buffer[numBytesRcvd] = '\0';
+    return true;
+}
+
 int ListenForConnections(int servSock, char *clientIP) {
     struct sockaddr_in clntAddr; // Client address structure
     socklen_t clntAddrLen = sizeof(clntAddr); // Length of the client address structure
@@ -102,16 +120,19 @@ int ListenForConnections(int servSock, char *clientIP) {
     int clntSock = accept(servSock, (struct sockaddr *)&clntAddr, &clntAddrLen);
     if (clntSock < 0) {
         DieWithSystemMessage("accept() failed");
-    }
-
-	printf("Handling client %s\n", inet_ntoa(clntAddr.sin_addr));
+    }	
 
     // Convert the client's IP address to a string
     //char senderIP[INET_ADDRSTRLEN];
     if (inet_ntop(AF_INET, &clntAddr.sin_addr, clientIP, INET_ADDRSTRLEN) == NULL) {
         DieWithSystemMessage("Error getting sender IP address");
     }
-
+    
+    char username[20]; 
+    if (ReceiveString(clntSock, username)) // Checks received string and prints it
+        printf("Connected to:\t %s IP: %s\n", username, inet_ntoa(clntAddr.sin_addr));
+    else
+        printf("Connected to IP: %s\n", inet_ntoa(clntAddr.sin_addr));
     printf("Connection established on socket %d\n", clntSock); // Print the client socket
     return clntSock;
 }
