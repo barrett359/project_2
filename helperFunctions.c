@@ -37,7 +37,6 @@ void SendMessage(int sock, const char *message) {
     }
 }
 
-
 void SendFile(int sock, const char *fileName) {
     FILE *file = fopen(fileName, "rb"); // Open the file for reading in binary mode
     if (file == NULL) {
@@ -69,6 +68,14 @@ void SendFile(int sock, const char *fileName) {
     fclose(file); // Close the file
 }
 
+void SendOption(int sock, int selection) {
+    // Convert selection from int to string
+    char selectionStr[3];
+    snprintf(selectionStr, sizeof(selectionStr), "%d", selection);
+
+    SendMessage(sock, selectionStr);
+}
+
 bool ReceiveMessage(int sock) {
     char recvBuffer[MAX_BUFFER_SIZE]; // Buffer for the thank you message
 
@@ -90,7 +97,7 @@ bool ReceiveMessage(int sock) {
     }
     else{
         recvBuffer[numBytesRcvd] = '\0'; // Terminate the string
-        printf("Received: %s\n", recvBuffer); // Print the thank you message
+        printf("%s\n", recvBuffer); // Print the thank you message
         return true; // Successfully received a thank you note, return true
     }
 }
@@ -236,3 +243,5 @@ fileInfo *listFiles(const char *path, int *count) {
     closedir(dir);
     return files; // Return the array of fileInfo
 }
+
+

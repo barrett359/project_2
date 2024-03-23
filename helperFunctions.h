@@ -79,7 +79,9 @@ void SendMessage(int sock, const char *message);
 * The message is received in chunks of MAX_BUFFER_SIZE bytes.
 * Checks if the message is a file or a message, by calling isFile().
 */
-//Receives
+
+void SendOption(int sock, int selection);
+
 bool ReceiveMessage(int sock);
 
 /*

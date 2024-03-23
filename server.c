@@ -7,6 +7,13 @@ int main(int argc, char *argv[]) {
     int maxUsers = 2;
     int filesPerUser = 10;
     int fileCount = 0;
+    char menuSelStr[3];
+    int menuSelection;
+    char menuString[] = "Select an actin from the menu:\n"
+        "1. Request file listing\n"
+        "2. Download file\n"
+        "3. List all downloads\n"
+        "4. Exit\n";
     
     char testFileName[] = "testFile.txt";
 
@@ -28,12 +35,37 @@ int main(int argc, char *argv[]) {
     int servSock = ServerSetup(port);
     printf("Server is listening on port %d\n", port);
     PrintLocalIP();
-    int clientSock = ListenForConnections(servSock, clientIP);
-    printf("Sending file to client: %s\n", testFileName);
+    int clientSock = ListenForConnections(servSock, clientIP); // Prints username and IP
+
+    // Send menu to client
+    SendMessage(clientSock, menuString);
+    
+    // Receive input 1-4 from client
+    // Sleep(3);
+    if (ReceiveString(clientSock, menuSelStr)) // Checks received string
+        menuSelection = atoi(menuSelStr);
+    else
+        printf("Failed to ReceiveString\n");
+
+    // Switch case?
+    /*switch (menuSelection) {
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            return 0;
+    }*/
+
+    printf("Server: Option selected was %s\n", menuSelStr);
+        
+    //printf("Sending file to client: %s\n", testFileName);
     
     //SendMessage(clientSock, message);
 
-    SendFile(clientSock, testFileName);
+    //SendFile(clientSock, testFileName);
 
     close(clientSock);
     printf("Closed connection\n");
