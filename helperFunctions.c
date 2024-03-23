@@ -195,3 +195,44 @@ void PrintLocalIP() {
 
     freeifaddrs(addrs); // Free the linked list
 }
+
+fileInfo *listFiles(const char *path, int *count) {
+    struct dirent *entry;
+    DIR *dir = opendir(path);
+    struct stat fileInfoStat;
+    char fullPath[1024];
+    
+    // Initially allocate memory for one fileInfo struct
+    fileInfo *files = malloc(sizeof(fileInfo));
+    *count = 0;
+
+    if (dir == NULL) {
+        perror("opendir() error");
+        exit(1);
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        // Skip "." and ".." entries
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        // Construct the full path of each file
+        snprintf(fullPath, sizeof(fullPath), "%s/%s", path, entry->d_name);
+        
+        // Get file info
+        if (stat(fullPath, &fileInfoStat) == 0) {
+            // Reallocate memory for the next file
+            files = realloc(files, (*count + 1) * sizeof(fileInfo));
+
+            // Allocate memory for the file name and copy it
+            files[*count].fileName = strdup(entry->d_name);
+            files[*count].fileSize = fileInfoStat.st_size; // Store the file size
+            
+            (*count)++;
+        }
+    }
+
+    closedir(dir);
+    return files; // Return the array of fileInfo
+}

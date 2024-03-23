@@ -6,12 +6,24 @@ int main(int argc, char *argv[]) {
     int totalConnections = 0;
     int maxUsers = 2;
     int filesPerUser = 10;
+    int fileCount = 0;
     
     char testFileName[] = "testFile.txt";
-    fileInfo *localFiles;
 
     int port = atoi(argv[1]); // Port number used for the connection
     char clientIP[INET_ADDRSTRLEN]; // Buffer for the client's IP address
+
+    if (argc != 2) {
+       printf("Not enough arguments, exiting\nUse <port>\n");
+       return 0;
+    }
+
+    fileInfo *localFiles = listFiles("./server_files", &fileCount);
+
+    for (int i = 0; i < fileCount; i++) {
+        printf("File: %s\n", localFiles[i].fileName);
+        printf("Size: %d\n", localFiles[i].fileSize);
+    }
 
     int servSock = ServerSetup(port);
     printf("Server is listening on port %d\n", port);
@@ -20,7 +32,7 @@ int main(int argc, char *argv[]) {
     printf("Sending file to client: %s\n", testFileName);
     
     //SendMessage(clientSock, message);
-    
+
     SendFile(clientSock, testFileName);
 
     close(clientSock);
