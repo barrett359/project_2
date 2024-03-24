@@ -32,17 +32,17 @@ typedef struct {
 } userInfo;
 
 /**
- * Brief: Connects to a server.
- * @param serverIP IP address of the server to connect to.
- * @param port Port number of the server to connect to.
- * @return The socket file descriptor.
- * 
- * Creates a client socket then connects to a server 
- * with the given IP address and port number
- */
+* Brief: Connects to a server.
+* @param serverIP IP address of the server to connect to.
+* @param port Port number of the server to connect to.
+* @return The socket file descriptor.
+* 
+* Creates a client socket then connects to a server 
+* with the given IP address and port number
+*/
 int ClientConnect(const char *serverIP, int port);
 
-/*
+/**
 * Brief: Sets up a server.
 * @param port Port number to listen on.
 * @return The server socket file descriptor.
@@ -51,7 +51,7 @@ int ClientConnect(const char *serverIP, int port);
 */
 int ServerSetup(int port);
 
-/*
+/**
 * Brief: Sends a file
 * @param sock The socket file descriptor. Assumes the socket is already connected.
 * @param fileName The name of the file to send.
@@ -62,7 +62,7 @@ int ServerSetup(int port);
 */
 void SendFile(int sock, const char *fileName);
 
-/*
+/**
 * Brief: Sends a message
 * @param sock The socket file descriptor. Assumes the socket is already connected.
 * @param message The message to send.
@@ -71,7 +71,10 @@ void SendFile(int sock, const char *fileName);
 */
 void SendMessage(int sock, const char *message);
 
-/*
+
+void SendOption(int sock, int selection);
+
+/**
 * Brief: Receives and prints a message
 * @param sock The socket file descriptor. Assumes the socket is already connected.
 *
@@ -79,23 +82,20 @@ void SendMessage(int sock, const char *message);
 * The message is received in chunks of MAX_BUFFER_SIZE bytes.
 * Checks if the message is a file or a message, by calling isFile().
 */
-
-void SendOption(int sock, int selection);
-
 bool ReceiveMessage(int sock);
 
-/*
+
+bool ReceiveString(int sock, char* buffer);
+
+
+/**
 * Brief: Prints the local IP address
 *
 * Prints the local IP address of the machine running the program.
 */
-bool ReceiveString(int sock, char* buffer);
-
-
-//Prints the local IP address
 void PrintLocalIP();
 
-/*
+/**
 * Brief: Listens for connections
 * @param servSock The server socket file descriptor.
 * @param clientIP The buffer to store the client's IP address.
@@ -107,7 +107,7 @@ void PrintLocalIP();
 */
 int ListenForConnections(int servSock, char *clientIP);
 
-/*
+/**
 * Brief: Receives a file, saves it, and prints it to the terminal.
 * @param buffer The buffer containing the file contents
 * @param bufferSize The size of the buffer.
@@ -116,7 +116,7 @@ int ListenForConnections(int servSock, char *clientIP);
 */
 void ProcessFile(const char *buffer, ssize_t bufferSize, const char *fileName);
 
-/*
+/**
 * Brief: Checks if a buffer contains a file.
 * @param buffer The buffer to check.
 * @return True if the buffer contains a file, false otherwise.
@@ -125,7 +125,7 @@ void ProcessFile(const char *buffer, ssize_t bufferSize, const char *fileName);
 */
 bool IsFile(const char *buffer);
 
-/*
+/**
 * Brief: Lists the files in a directory 
 *        and stores them in a fileInfo struct.
 * @param path The path to the directory.
