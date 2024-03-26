@@ -8,7 +8,8 @@ int main(int argc, char *argv[]) {
 
     char menuSelStr[3];
     int menuSelection;
-    char menuString[] = "Select an actin from the menu:\n"
+    bool loop = true;
+    char menuStr[] = "Select an action from the menu:\n"
         "1. Request file listing\n"
         "2. Download file\n"
         "3. List all downloads\n"
@@ -66,41 +67,43 @@ int main(int argc, char *argv[]) {
         printf("User found\n");
     }
 
-    writeUserInfoToFile(users, totalConnections, "users.txt");   
     
-    // Send menu to client
-    SendMessage(clientSock, menuString);
-    
-    // Receive input 1-4 from client
-    // Sleep(3);
-    if (ReceiveString(clientSock, menuSelStr)) // Checks received string
-        menuSelection = atoi(menuSelStr);
-    else
-        printf("Failed to Receive String\n");
+    while (loop) {
+        // Send menu to client
+        SendMessage(clientSock, menuStr);
 
-    // Switch case?
-    /*switch (menuSelection) {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            return 0;
-    }*/
+        // Receive input 1-4 from client
+        // Sleep(3);
+        if (ReceiveString(clientSock, menuSelStr)) // Checks received string
+            menuSelection = atoi(menuSelStr);
+        else
+            printf("Failed to Receive String\n");
 
-    printf("Server: Option selected was %s\n", menuSelStr);
+        switch (menuSelection) {
+        case 1: // Send file list            
+            printf("Server: Option selected was %s\n", menuSelStr);
+            SendMessage(clientSock, "File List");
+            break;
+
+        case 2: // Send filename request
+            break;
+
+        case 3: // Send download record
+            break;
+
+        case 4: // Send goodbye message
+            SendMessage(clientSock, ">> Goobye!!!\n");
+            close(clientSock);
+            printf("Closed connection\n");
+            loop = false;
+        }
+    }
         
     //printf("Sending file to client: %s\n", testFileName);
     
     //SendMessage(clientSock, message);
 
     //SendFile(clientSock, testFileName);
-
-    close(clientSock);
-    printf("Closed connection\n");
-    
     return 0;
 }
 
