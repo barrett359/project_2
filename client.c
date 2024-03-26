@@ -70,6 +70,7 @@ int main(int argc, char *argv[]) {
             // return 0; // Can end client here or stop look then end. Whichever you prefer
         }
     }
+    close(serverSocket);
     
     //printf("Server Socket: %d\n", serverSocket);
     return 0;

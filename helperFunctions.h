@@ -139,6 +139,6 @@ bool IsFile(const char *buffer);
 
 fileInfo *listFiles(const char *path, int *count);
 
-bool checkUser(const char *username, userInfo *users, int userCount);
+int checkUser(const char *username, userInfo *users, int userCount, bool *userExists);
 
 #endif // HELPERFUNCTIONS_H_

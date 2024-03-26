@@ -237,16 +237,27 @@ fileInfo *listFiles(const char *path, int *count) {
     return files; // Return the array of fileInfo
 }
 
-bool checkUser(const char *username, userInfo *users, int userCount) {
+int checkUser(const char *username, userInfo *users, int userCount, bool *userExists) {
+    if (username == NULL) {
+        printf("Input username is NULL\n");
+        return userCount;
+    }
+
     for (int i = 0; i < userCount; i++) {
-        if(users[i].username == NULL) {
-            return false;
+        if (users[i].username == NULL) {
+            printf("User at index %d is NULL\n", i);
+            continue;
         }
+        
         if (strcmp(username, users[i].username) == 0) {
-            // User found, store the user information in the foundUser struct
-            return true;
+            printf("User found at index %d\n", i);
+            printf("Username: %s\n", users[i].username);
+            //user found
+            *userExists = true;
+            return i;
         }
     }
-    // User not found
-    return false;
+    //user not found
+    return userCount;
 }
+
