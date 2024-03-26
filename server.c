@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     }
 
     int servSock = ServerSetup(port);
-    printf("Server is listening on port %d\n", port);
+    // printf("Server is listening on port %d\n", port);
     PrintLocalIP();
     
     while (uniqueUsers < maxConnections) {
@@ -109,17 +109,18 @@ int main(int argc, char *argv[]) {
             else
                 printf("Failed to Receive String\n");
 
-            switch (menuSelection) {
-            case 1: // Send file list            
-                    SendMessage(clientSock, "File List");
-                    
-                break;
+        switch (menuSelection) {
+        case 1: // Send file list         
+            printf("\t%s requested file listing\n", username);
+            SendMessage(clientSock, "File List\n");
+            break;
 
             case 2: // Send file to download
                 SendMessage(clientSock, ">> Enter filename you would like to download:\n");
 
-                if (ReceiveString(clientSock, filename)) { // Receive file name
-                    int fileIndex = -1; 
+            if (ReceiveString(clientSock, filename)) { // Receive file name
+                printf("\t%s requested download: %s\n", username, filename);
+                int fileIndex = -1; 
 
                     // Search if file exists.
                     for (int i = 0; i < fileCount; i++) {
@@ -135,16 +136,17 @@ int main(int argc, char *argv[]) {
                         SendOption(clientSock, 1); // Option 1 sent
                     }
 
-                    // Sends response, sends file
-                    else {
-                        SendOption(clientSock, 2); // Option 2 sent
-                        SendFile(clientSock, filename);
-                    }
+                // Sends response, sends file
+                else {
+                    SendOption(clientSock, 2); // Option 2 sent
+                    SendFile(clientSock, filename);
+                    printf("Sent %s to %s\n", filename, username);
                 }
-                else
-                    printf("Failed to receive filename!\n"); 
-                
-                    break;
+            }
+            else
+                printf("Failed to receive filename!\n"); 
+            
+            break;
 
             case 3: // Send list of all downloads
                 printf("%s requested a list of all downloads\n", users[currentUser].username);
@@ -183,6 +185,15 @@ int main(int argc, char *argv[]) {
 
                 break;
 
+        case 4: // Send goodbye message
+            SendMessage(clientSock, ">> Goobye!!!\n");
+            close(clientSock);
+            printf("Connection with %s terminated\n", username);
+            loop = false;
+        }
+    }
+        
+    //printf("Sending file to client: %s\n", testFileName);
             case 4: // Send goodbye message
                 SendMessage(clientSock, ">> Goobye!!!\n");
                 close(clientSock);
