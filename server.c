@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
 
         switch (menuSelection) {
         case 1: // Send file list         
-            printf("\t%s requested file listing\n", username);
+            printf("\t%s requested file listing\n", clientName);
             SendMessage(clientSock, "File List\n");
             break;
 
@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
                 SendMessage(clientSock, ">> Enter filename you would like to download:\n");
 
             if (ReceiveString(clientSock, filename)) { // Receive file name
-                printf("\t%s requested download: %s\n", username, filename);
+                printf("\t%s requested download: %s\n", clientName, filename);
                 int fileIndex = -1; 
 
                     // Search if file exists.
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
                 else {
                     SendOption(clientSock, 2); // Option 2 sent
                     SendFile(clientSock, filename);
-                    printf("Sent %s to %s\n", filename, username);
+                    printf("Sent %s to %s\n", filename, clientName);
                 }
             }
             else
@@ -188,20 +188,9 @@ int main(int argc, char *argv[]) {
         case 4: // Send goodbye message
             SendMessage(clientSock, ">> Goobye!!!\n");
             close(clientSock);
-            printf("Connection with %s terminated\n", username);
+            printf("Connection with %s terminated\n", clientName);
             loop = false;
         }
-    }
-        
-    //printf("Sending file to client: %s\n", testFileName);
-            case 4: // Send goodbye message
-                SendMessage(clientSock, ">> Goobye!!!\n");
-                close(clientSock);
-                printf("Closed connection\n");
-                loop = false;
-            }
-        }
-        close(clientSock);
     }
     close(servSock);
     
