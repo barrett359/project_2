@@ -73,14 +73,15 @@ int main(int argc, char *argv[]) {
 
             // Option 2 - downloads file and displays it
             if (serverFileResp == 2) {
-                ReceiveMessage(serverSocket); // Receives file
-
+                ReceiveMessage(serverSocket); // Receives file, saves it and reads it
+                
             }
 
             // Option 1 - File not found, server sends nothing
             else { 
                 printf("File not found!\n")
             }
+
             break;
 
         case 3: // Receive download record
