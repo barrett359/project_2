@@ -99,13 +99,14 @@ void PrintLocalIP();
 * Brief: Listens for connections
 * @param servSock The server socket file descriptor.
 * @param clientIP The buffer to store the client's IP address.
+* @param username The buffer to store the client's username.
 * @return The client socket file descriptor.
 *
 * Listens for connections on the server socket 
 * and stores the client's IP address in the clientIP buffer.
 * Will only accept one connection per fucntion call. 
 */
-int ListenForConnections(int servSock, char *clientIP);
+int ListenForConnections(int servSock, char *clientIP, char *username);
 
 /**
 * Brief: Receives a file, saves it, and prints it to the terminal.
@@ -137,5 +138,7 @@ bool IsFile(const char *buffer);
 */
 
 fileInfo *listFiles(const char *path, int *count);
+
+bool checkUser(const char *username, userInfo *users, int userCount);
 
 #endif // HELPERFUNCTIONS_H_

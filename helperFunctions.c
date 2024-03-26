@@ -119,7 +119,7 @@ bool ReceiveString(int sock, char* buffer) {
     return true;
 }
 
-int ListenForConnections(int servSock, char *clientIP) {
+int ListenForConnections(int servSock, char *clientIP, char *username) {
     struct sockaddr_in clntAddr; // Client address structure
     socklen_t clntAddrLen = sizeof(clntAddr); // Length of the client address structure
 
@@ -135,20 +135,13 @@ int ListenForConnections(int servSock, char *clientIP) {
         DieWithSystemMessage("Error getting sender IP address");
     }
     
-    char username[20]; 
+    
     if (ReceiveString(clntSock, username)) // Checks received string and prints it
         printf("Connected to:\t %s IP: %s\n", username, inet_ntoa(clntAddr.sin_addr));
     else
         printf("Connected to IP: %s\n", inet_ntoa(clntAddr.sin_addr));
     printf("Connection established on socket %d\n", clntSock); // Print the client socket
     return clntSock;
-}
-
-bool IDUser(int sock, const char *username) {
-    char message[MAX_BUFFER_SIZE];
-    snprintf(message, sizeof(message), "ID:%s", username);
-    SendMessage(sock, message);
-    return ReceiveMessage(sock);
 }
 
 void ProcessMessage(const char *buffer, ssize_t bufferSize) {
@@ -244,4 +237,16 @@ fileInfo *listFiles(const char *path, int *count) {
     return files; // Return the array of fileInfo
 }
 
-
+bool checkUser(const char *username, userInfo *users, int userCount) {
+    for (int i = 0; i < userCount; i++) {
+        if(users[i].username == NULL) {
+            return false;
+        }
+        if (strcmp(username, users[i].username) == 0) {
+            // User found, store the user information in the foundUser struct
+            return true;
+        }
+    }
+    // User not found
+    return false;
+}
