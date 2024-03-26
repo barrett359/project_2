@@ -61,6 +61,7 @@ int main(int argc, char *argv[]) {
 
         case 2: // Receive filename request
             ReceiveMessage(serverSocket);
+            printf(">> ");
             scanf("%s", filename);
             SendMessage(serverSocket, filename);
 
@@ -74,12 +75,12 @@ int main(int argc, char *argv[]) {
             // Option 2 - downloads file and displays it
             if (serverFileResp == 2) {
                 ReceiveMessage(serverSocket); // Receives file, saves it and reads it
-                
+                printf("\n\n");
             }
 
             // Option 1 - File not found, server sends nothing
             else { 
-                printf("File not found!\n")
+                printf("File not found!\n");
             }
 
             break;

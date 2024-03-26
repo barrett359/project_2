@@ -39,7 +39,7 @@ void SendMessage(int sock, const char *message) {
 
 void SendFile(int sock, const char *fileName) {
     char filePath[50]; // copy filename and add path 
-    snprintf(filePath, sizeof(filePath), "%s/%s", "./server_files", filename);
+    snprintf(filePath, sizeof(filePath), "%s/%s", "./server_files", fileName);
     FILE *file = fopen(filePath, "rb"); // Open the file for reading in binary mode
     if (file == NULL) {
         DieWithUserMessage("File open failed", fileName); // Error if file can't be opened

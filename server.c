@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
             break;
 
         case 2: // Send file to download
-            SendMessage(clientSock, ">> Enter filename you would like to download:\n>> ");
+            SendMessage(clientSock, ">> Enter filename you would like to download:\n");
 
             if (ReceiveString(clientSock, filename)) { // Receive file name
                 int fileIndex = -1; 
