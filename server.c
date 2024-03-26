@@ -3,10 +3,9 @@
 #include <string.h>
 
 int main(int argc, char *argv[]) {
-    int totalConnections = 0;
-    int maxUsers = 2;
-    int filesPerUser = 10;
+    int maxFilesPerUser = 10;
     int fileCount = 0;
+
     char filename[50];
     char menuSelStr[3];
     int menuSelection;
@@ -18,13 +17,32 @@ int main(int argc, char *argv[]) {
         "4. Exit\n";
     
     char testFileName[] = "testFile.txt";
-
+    char username[20];
+    
     int port = atoi(argv[1]); // Port number used for the connection
     char clientIP[INET_ADDRSTRLEN]; // Buffer for the client's IP address
+    int totalConnections = 0;
+    int maxConnections = 2;
 
     if (argc != 2) {
        printf("Not enough arguments, exiting\nUse <port>\n");
        return 0;
+    }
+    
+
+    userInfo *users = malloc((maxConnections) * sizeof(userInfo));
+    if (users == NULL) {
+        fprintf(stderr, "Failed to allocate memory for users\n");
+        exit(EXIT_FAILURE);
+    }
+
+    //Allocate memory for the fileList for each user
+    for (int i = 0; i < maxConnections; i++) {
+        users[i].fileList = malloc(maxFilesPerUser * sizeof(fileInfo));
+        if (users[i].fileList == NULL) {
+            fprintf(stderr, "Failed to allocate memory for fileList of user %d\n", i);
+            exit(EXIT_FAILURE);
+        }
     }
 
     fileInfo *localFiles = listFiles("./server_files", &fileCount);
@@ -37,7 +55,18 @@ int main(int argc, char *argv[]) {
     int servSock = ServerSetup(port);
     printf("Server is listening on port %d\n", port);
     PrintLocalIP();
-    int clientSock = ListenForConnections(servSock, clientIP); // Prints username and IP
+    
+    int clientSock = ListenForConnections(servSock, clientIP,  username); // Prints username and IP
+
+    //save username and IP in users
+    if (!checkUser(username, users, totalConnections)){
+        users[totalConnections].username = username;
+        users[totalConnections].IP = clientIP;
+        totalConnections++;
+        printf("User not found\n adding user.\n");
+    } else {
+        printf("User found\n");
+    }
 
     
     while (loop) {
@@ -49,7 +78,7 @@ int main(int argc, char *argv[]) {
         if (ReceiveString(clientSock, menuSelStr)) // Checks received string
             menuSelection = atoi(menuSelStr);
         else
-            printf("Failed to ReceiveString\n");
+            printf("Failed to Receive String\n");
 
         switch (menuSelection) {
         case 1: // Send file list            
@@ -112,7 +141,7 @@ int main(int argc, char *argv[]) {
         //store in localFiles
 
     /*// Allocate memory for the user list
-    userInfo *users = malloc(maxUsers * sizeof(userInfo));
+    userInfo *users = malloc(maxConnections * sizeof(userInfo));
     if (users == NULL) {
         fprintf(stderr, "Failed to allocate memory for users\n");
         exit(EXIT_FAILURE);
