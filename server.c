@@ -1,12 +1,13 @@
 #include "Practical.h"
 #include "helperFunctions.h"
-
+#include <string.h>
 
 int main(int argc, char *argv[]) {
     int totalConnections = 0;
     int maxUsers = 2;
     int filesPerUser = 10;
     int fileCount = 0;
+    char filename[50];
     char menuSelStr[3];
     int menuSelection;
     bool loop = true;
@@ -52,14 +53,41 @@ int main(int argc, char *argv[]) {
 
         switch (menuSelection) {
         case 1: // Send file list            
-            printf("Server: Option selected was %s\n", menuSelStr);
             SendMessage(clientSock, "File List");
             break;
 
-        case 2: // Send filename request
+        case 2: // Send file to download
+            SendMessage(clientSock, ">> Enter filename you would like to download:\n>> ");
+
+            if (ReceiveString(clientSock, filename)) { // Receive file name
+                int fileIndex = -1; 
+
+                // Search if file exists.
+                for (int i = 0; i < fileCount; i++) {
+                    if (strcmp(localFiles[i].fileName, filename) == 0) {
+                        fileIndex = i;
+                        break;
+                    }
+                }
+
+                // File not found, server only sends response
+                if (fileIndex == -1) {
+                    printf("File not found!\n");
+                    SendOption(clientSock, 1); // Option 1 sent
+                }
+
+                // Sends response, sends file
+                else {
+                    SendOption(clientSock, 2); // Option 2 sent
+                    SendFile(clientSock, filename);
+                }
+            }
+            else
+                printf("Failed to receive filename!\n"); 
+            
             break;
 
-        case 3: // Send download record
+        case 3: // Send download record            
             break;
 
         case 4: // Send goodbye message
