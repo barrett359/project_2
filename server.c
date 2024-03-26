@@ -92,7 +92,6 @@ int main(int argc, char *argv[]) {
             SendMessage(clientSock, menuStr);
 
             // Receive input 1-4 from client
-            // Sleep(3);
             if (ReceiveString(clientSock, menuSelStr)) // Checks received string
                 menuSelection = atoi(menuSelStr);
             else
@@ -203,7 +202,6 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    
 
     close(servSock);
 

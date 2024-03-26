@@ -87,7 +87,6 @@ int main(int argc, char *argv[]) {
 
         case 3: // Receive download record
             ReceiveMessage(serverSocket);
-            
             break;
 
         case 4: // Receive goodbye message
