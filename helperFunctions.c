@@ -29,7 +29,7 @@ int ServerSetup(int port) {
 
 void SendMessage(int sock, const char *message) {
     ssize_t numBytes = send(sock, message, strlen(message), 0);
-    printf("Bytes sent: %ld\n", numBytes); // Print the number of bytes sent
+    // printf("Bytes sent: %ld\n", numBytes); // Print the number of bytes sent
     if (numBytes < 0) {
         DieWithSystemMessage("send() failed"); // Error if send fails
     } else if (numBytes != strlen(message)) {
@@ -60,7 +60,7 @@ void SendFile(int sock, const char *fileName) {
 		if (send(sock, fileBuffer, bytesRead, 0) != bytesRead) {
             DieWithSystemMessage("send() failed"); // Error if send does not complete properly
         }
-		printf("Sent %d bytes\n", bytesRead);
+		// printf("Sent %d bytes\n", bytesRead);
 	}
 
     if (ferror(file)) {
@@ -142,7 +142,7 @@ int ListenForConnections(int servSock, char *clientIP, char *username) {
         printf("Connected to:\t %s IP: %s\n", username, inet_ntoa(clntAddr.sin_addr));
     else
         printf("Connected to IP: %s\n", inet_ntoa(clntAddr.sin_addr));
-    printf("Connection established on socket %d\n", clntSock); // Print the client socket
+    // printf("Connection established on socket %d\n", clntSock); // Print the client socket
     return clntSock;
 }
 

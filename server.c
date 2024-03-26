@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     }
 
     int servSock = ServerSetup(port);
-    printf("Server is listening on port %d\n", port);
+    // printf("Server is listening on port %d\n", port);
     PrintLocalIP();
     
     int clientSock = ListenForConnections(servSock, clientIP,  username); // Prints username and IP
@@ -81,14 +81,16 @@ int main(int argc, char *argv[]) {
             printf("Failed to Receive String\n");
 
         switch (menuSelection) {
-        case 1: // Send file list            
-            SendMessage(clientSock, "File List");
+        case 1: // Send file list         
+            printf("\t%s requested file listing\n", username);
+            SendMessage(clientSock, "File List\n");
             break;
 
         case 2: // Send file to download
             SendMessage(clientSock, ">> Enter filename you would like to download:\n");
 
             if (ReceiveString(clientSock, filename)) { // Receive file name
+                printf("\t%s requested download: %s\n", username, filename);
                 int fileIndex = -1; 
 
                 // Search if file exists.
@@ -109,6 +111,7 @@ int main(int argc, char *argv[]) {
                 else {
                     SendOption(clientSock, 2); // Option 2 sent
                     SendFile(clientSock, filename);
+                    printf("Sent %s to %s\n", filename, username);
                 }
             }
             else
@@ -116,13 +119,17 @@ int main(int argc, char *argv[]) {
             
             break;
 
-        case 3: // Send download record            
+        case 3: // Send download record    
+            printf("\t%s requested listing of downloads\n", username);
+            // printf("Sent listing of downloads to %s\n", username);
+
+
             break;
 
         case 4: // Send goodbye message
             SendMessage(clientSock, ">> Goobye!!!\n");
             close(clientSock);
-            printf("Closed connection\n");
+            printf("Connection with %s terminated\n", username);
             loop = false;
         }
     }
