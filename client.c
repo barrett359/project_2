@@ -30,7 +30,8 @@ int main(int argc, char *argv[]) {
     
     while (loop) {
         // Receive menu from server
-        ReceiveMessage(serverSocket);
+        ReceiveMessage(serverSocket); 
+
         menuSelection = -1; // menuSelection reset
         
         while (menuSelection == -1) {
@@ -82,11 +83,11 @@ int main(int argc, char *argv[]) {
             else { 
                 printf("File not found!\n");
             }
-
             break;
 
         case 3: // Receive download record
             ReceiveMessage(serverSocket);
+            
             break;
 
         case 4: // Receive goodbye message
