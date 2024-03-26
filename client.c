@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
         switch (menuSelection) {
         case 1: // Receive file list            
             ReceiveMessage(serverSocket);
-            break;
+            continue;
 
         case 2: // Receive filename request
             ReceiveMessage(serverSocket);

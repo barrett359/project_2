@@ -15,7 +15,6 @@ int main(int argc, char *argv[]) {
         "2. Download file\n"
         "3. List all downloads\n"
         "4. Exit\n";
-    char byeStr[] = ">> Goobye!!!\n"
     
     char testFileName[] = "testFile.txt";
 
@@ -54,6 +53,7 @@ int main(int argc, char *argv[]) {
         switch (menuSelection) {
         case 1: // Send file list            
             printf("Server: Option selected was %s\n", menuSelStr);
+            SendMessage(clientSock, "File List");
             break;
 
         case 2: // Send filename request
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
             break;
 
         case 4: // Send goodbye message
-            SendMessage(clientSock, byeStr);
+            SendMessage(clientSock, ">> Goobye!!!\n");
             close(clientSock);
             printf("Closed connection\n");
             loop = false;
