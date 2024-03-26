@@ -3,40 +3,59 @@
 #include <string.h>
 
 int main(int argc, char *argv[]) {
+
+    // Check for correct number of arguments
+    if (argc != 2) {
+       printf("Not enough arguments, exiting\nUse <port>\n");
+       return 0;
+    }
+
+    //Maximum number of files per user
     int maxFilesPerUser = 10;
+
+    // Number of files in the server_files directory
     int fileCount = 0;
 
+    // Buffer for the filename from the client
     char filename[50];
+
+    // Buffer for the menu selection from the client
     char menuSelStr[3];
+
+    //Used to store menu selection from the client
     int menuSelection;
     
+    //Menu to be sent to the client
     char menuStr[] = "Select an action from the menu:\n"
         "1. Request file listing\n"
         "2. Download file\n"
         "3. List all downloads\n"
         "4. Exit\n";
     
-    char testFileName[] = "testFile.txt";
+    
+    // Buffer for the client's username. Later stored in users
     char clientName[20];
-    
-    int port = atoi(argv[1]); // Port number used for the connection
-    char clientIP[INET_ADDRSTRLEN]; // Buffer for the client's IP address
-    int uniqueUsers = 0;//used to store the max index of users that ha
-    int maxConnections = 10; //used to store the index of the users that have been stored in the array
-    int currentUser = 0; //used to store the index of the current user
 
-    if (argc != 2) {
-       printf("Not enough arguments, exiting\nUse <port>\n");
-       return 0;
-    }
+    // Port number used for the connection
+    int port = atoi(argv[1]); 
+    // Buffer for the client's IP address
+    char clientIP[INET_ADDRSTRLEN]; 
+    // Number of unique users that have connected to the server
+    int uniqueUsers = 0;
+    // Maximum number of users that can connect before the server exits.
+    int maxConnections = 10; 
+    //used to store the index of the current user
+    int currentUser = 0; 
     
 
+    // Allocate memory for the users array
     userInfo *users = malloc((maxConnections) * sizeof(userInfo));
     if (users == NULL) {
         fprintf(stderr, "Failed to allocate memory for users\n");
         exit(EXIT_FAILURE);
     }
 
+    
     //Allocate memory for the fileList for each user
     for (int i = 0; i < maxConnections; i++) {
         users[i].fileList = malloc(maxFilesPerUser * sizeof(fileInfo));
@@ -46,17 +65,22 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    // Get the list of files in the server_files directory
     fileInfo *localFiles = listFiles("./server_files", &fileCount);
 
+    // Print the list of files (testing purposes)
     for (int i = 0; i < fileCount; i++) {
         printf("File: %s\n", localFiles[i].fileName);
         printf("Size: %d\n", localFiles[i].fileSize);
     }
 
+    // Set up the server
     int servSock = ServerSetup(port);
-    // printf("Server is listening on port %d\n", port);
+    
+    //Prints the server's IP address to make client connection easier
     PrintLocalIP();
     
+    // Loop to accept connections. Will run maxConnections times.
     while (uniqueUsers < maxConnections) {
         int clientSock = ListenForConnections(servSock, clientIP,  clientName); // Prints username and IP
         bool loop = true;
@@ -189,6 +213,9 @@ int main(int argc, char *argv[]) {
                                             USERNAME_WIDTH, "", users[i].fileList[j].fileName, users[i].fileList[j].fileSize);
                         }
                     }
+                    if(downloadList[0] == '\0') {
+                        snprintf(downloadList, MAX_BUFFER_SIZE, "No downloads yet\n");
+                    }
                     // Send the download list to the client
                     SendMessage(clientSock, downloadList);
 
@@ -202,6 +229,8 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    free(users);
+
 
     close(servSock);
 
