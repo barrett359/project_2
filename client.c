@@ -12,7 +12,10 @@ int main(int argc, char *argv[]) {
     char *serverIP = argv[1];
     int port = atoi(argv[2]);
     char username[20];
+    char filename[50];
     int menuSelection = -1;
+    char serverFileRespStr[3];
+    int serverFileResp = -1;
     bool loop = true;
 
     // Ask for name
@@ -58,6 +61,28 @@ int main(int argc, char *argv[]) {
 
         case 2: // Receive filename request
             ReceiveMessage(serverSocket);
+            printf(">> ");
+            scanf("%s", filename);
+            SendMessage(serverSocket, filename);
+
+            // Checks response 1 or 2
+            if (ReceiveString(serverSocket, serverFileRespStr)) 
+                serverFileResp = atoi(serverFileRespStr);
+            else
+                printf("Failed to ReceiveString\n");
+            
+
+            // Option 2 - downloads file and displays it
+            if (serverFileResp == 2) {
+                ReceiveMessage(serverSocket); // Receives file, saves it and reads it
+                printf("\n\n");
+            }
+
+            // Option 1 - File not found, server sends nothing
+            else { 
+                printf("File not found!\n");
+            }
+
             break;
 
         case 3: // Receive download record
