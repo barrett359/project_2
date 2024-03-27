@@ -1,3 +1,13 @@
+/*
+*	James Williams
+*   Bryan Molina Cervantes
+*	Assignment 2
+*
+*	This program is designed to simulate a simple file server.
+*	It will send files to corresponding clients and allowing them to view a list of available files as well as their downloaded ones.
+* 	The server will host up to 2 connections before terminating.
+*/
+
 #include "Practical.h"
 #include "helperFunctions.h"
 #include <stdio.h> // For user input

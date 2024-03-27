@@ -1,3 +1,13 @@
+/*
+*	James Williams
+*   Bryan Molina Cervantes
+*	Assignment 2
+*
+*	This program is designed to simulate a simple file server.
+*	It will send files to corresponding clients and allowing them to view a list of available files as well as their downloaded ones.
+* 	The server will host up to 2 connections before terminating.
+*/
+
 #include "Practical.h"
 #include "helperFunctions.h"
 #include <string.h>
@@ -147,10 +157,10 @@ int main(int argc, char *argv[]) {
                         int bufferSpace = MAX_BUFFER_SIZE - length - 1; // -1 for null terminator
                         // Check if there's enough buffer space for the next line
                         if (bufferSpace > 0) {
-                            int lineLength = snprintf(NULL, 0, "%s %d bytes\n", localFiles[i].fileName, localFiles[i].fileSize);
+                            int lineLength = snprintf(NULL, 0, "%s\t %d bytes\n", localFiles[i].fileName, localFiles[i].fileSize);
                             // If enough space, append to message; otherwise, break the loop
                             if (lineLength < bufferSpace) {
-                                snprintf(message + length, bufferSpace, "%s %d bytes\n", localFiles[i].fileName, localFiles[i].fileSize);
+                                snprintf(message + length, bufferSpace, "%s\t %d bytes\n", localFiles[i].fileName, localFiles[i].fileSize);
                                 length += lineLength;
                             } else {
                                 fprintf(stderr, "Buffer full, some files may not be listed\n");
